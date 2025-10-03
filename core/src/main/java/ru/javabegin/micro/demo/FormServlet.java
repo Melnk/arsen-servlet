@@ -1,12 +1,14 @@
 package ru.javabegin.micro.demo;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+
 
 @WebServlet("/submit")
 public class FormServlet extends HttpServlet {
@@ -20,7 +22,7 @@ public class FormServlet extends HttpServlet {
         String email = req.getParameter("email");
 
         if (name == null || email == null
-        || name.trim().length() == 0 || email.trim().length() == 0
+        || name.trim().isEmpty() || email.trim().isEmpty()
         || !email.contains("@")) {
             resp.getWriter().println("<!DOCTYPE html><html><body>");
             resp.getWriter().println("<p style='color:red;'>Ошибка: заполните поля корректно!</p>");
@@ -29,7 +31,11 @@ public class FormServlet extends HttpServlet {
             return;
         }
 
-        File file = new File(getServletConte)
-    }
+        File file = new File(getServletContext().getRealPath("/WEB-INF/data.txt"));
+        try (FileWriter fw = new FileWriter(file)) {
+            fw.write(name + ", " + email + "\n");
+        }
 
+        resp.sendRedirect("thanks.html");
+    }
 }
