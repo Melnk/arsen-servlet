@@ -8,7 +8,7 @@
     <display-name>arsen-servlet</display-name>
 
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>log.html</welcome-file>
         <welcome-file>form.html</welcome-file>
     </welcome-file-list>
 </web-app>
