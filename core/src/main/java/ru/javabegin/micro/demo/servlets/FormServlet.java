@@ -1,4 +1,4 @@
-package ru.javabegin.micro.demo;
+package ru.javabegin.micro.demo.servlets;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
