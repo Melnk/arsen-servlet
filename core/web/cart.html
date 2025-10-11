@@ -1,126 +1,200 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Корзина</title>
-  <style>
-    * {box-sizing: border-box;margin: 0;padding: 0;}
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background-color: #f4f4f4;
-      min-height: 100vh;
-      text-align: center;
-    }
-    body.dark {background-color: #121212;color: #f0f0f0;}
-    .top-controls {position: fixed;top: 20px;left: 20px;display: flex;gap: 10px;z-index: 100;}
-    .menu-toggle, .theme-toggle {
-      padding: 12px 24px; background: linear-gradient(135deg, #194152, #194152);
-      color: #fff;border: none;border-radius: 50px;cursor: pointer;font-size: 16px;font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);transition: all 0.3s ease;
-    }
-    .menu-toggle:hover,.theme-toggle:hover {
-      background: linear-gradient(135deg, #27ae60, #1e8449);
-      transform: translateY(-2px) scale(1.05);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-    }
-    .nav-sidebar {
-      position: fixed; top: 0; left: -300px; width: 280px; height: 100vh;
-      background: #333; transition: left 0.3s ease-in-out; z-index: 1000;
-      padding: 60px 20px 20px;
-    }
-    .nav-sidebar.active {left: 0;}
-    .nav-sidebar ul {list-style-type: none;display: flex;flex-direction: column;gap: 10px;}
-    .nav-sidebar a {
-      display: block;color: white;padding: 12px 15px;border-radius: 5px;text-decoration: none;
-      transition: background-color 0.3s ease;
-    }
-    .nav-sidebar a:hover {background-color: #111;}
-    .close-btn {
-      position: absolute; top: 15px; right: 15px; background: none; border: none; color: white;
-      font-size: 28px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
-    }
-    .overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5); opacity: 0; visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s; z-index: 999;
-    }
-    .overlay.active {opacity: 1; visibility: visible;}
-    h1 {margin-top: 80px; font-size: 2rem;}
-
-    /* === КОРЗИНА === */
-    .cart-table {
-      width: 90%; max-width: 800px; margin: 30px auto;
-      border-collapse: collapse; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-      border-radius: 12px; overflow: hidden;
-    }
-    .cart-table th,.cart-table td {padding: 15px;text-align: center;}
-    .cart-table thead {
-      background: linear-gradient(135deg, #27ae60, #1e8449);
-      color: #fff; font-size: 1.1rem;
-    }
-    .cart-table tbody tr:nth-child(even) {background-color: #f9f9f9;}
-    .cart-table tbody tr:hover {background-color: rgba(39, 174, 96, 0.1);}
-    button.make-order {
-      display: inline-block; padding: 14px 30px; margin-top: 20px;
-      background: linear-gradient(135deg, #27ae60, #1e8449); color: #fff;
-      border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold;
-      cursor: pointer; transition: background 0.3s ease, transform 0.2s ease;
-    }
-    button.make-order:hover {
-      background: linear-gradient(135deg, #2ecc71, #27ae60);
-      transform: translateY(-2px) scale(1.03);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Дополнительно для корзины */
+        .cart-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .cart-item {
+            background:#fff;
+            padding:15px;
+            margin:15px 0;
+            border-radius:8px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.1);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap: wrap;
+        }
+        .cart-item span {flex:2; text-align:left;}
+        .cart-item input.qty-cart {
+            width:60px;
+            text-align:center;
+            margin:0 10px;
+        }
+        .cart-item button.remove-btn {
+            background:#e74c3c;
+            color:#fff;
+            border:none;
+            padding:8px 15px;
+            border-radius:6px;
+            cursor:pointer;
+        }
+        .cart-item button.remove-btn:hover {background:#c0392b;}
+        #order-btn {
+            padding:14px 30px;
+            font-size:1.1rem;
+            background:#27ae60;
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            margin-top:15px;
+        }
+        #order-btn:hover {background:#2ecc71;}
+        #clear-cart {
+            padding:12px 25px;
+            background:#f39c12;
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            margin-top:10px;
+        }
+        #clear-cart:hover {background:#e67e22;}
+        .total-container {
+            font-weight:bold;
+            font-size:1.3rem;
+            margin-top:20px;
+        }
+    </style>
 </head>
 <body>
+
 <div class="top-controls">
-  <button id="menuToggle" class="menu-toggle">☰ Меню</button>
-  <button id="theme-toggle" class="theme-toggle">🌙 / ☀️</button>
+    <button id="menuToggle" class="menu-toggle">☰ Меню</button>
+    <button id="theme-toggle" class="theme-toggle">🌙 / ☀️</button>
 </div>
 
 <nav id="mainNav" class="nav-sidebar">
-  <ul>
-    <li><a href="index.html">Главная</a></li>
-    <li><a href="bio.html">Биография</a></li>
-    <li><a href="gallery.html">Галерея</a></li>
-    <li><a href="bag.html">Багажник</a></li>
-    <li><a href="form.html">Форма</a></li>
-    <li><a href="stat.html">Статистика</a></li>
-    <li><a href="merches.html">Товары</a></li>
-    <li><a href="cart.html">Корзина</a></li>
-  </ul>
-  <button class="close-btn">×</button>
+    <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="bio.html">Биография</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="bag.html">Багажник</a></li>
+        <li><a href="form.html">Форма</a></li>
+        <li><a href="stat.html">Статистика</a></li>
+        <li><a href="merches.html">Товары</a></li>
+    </ul>
+    <button class="close-btn">×</button>
 </nav>
-
 <div id="overlay" class="overlay"></div>
 
-<h1>Ваша корзина</h1>
-<table class="cart-table">
-  <thead>
-  <tr>
-    <th>Товар</th>
-    <th>Количество</th>
-    <th>Цена</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td>Футболка Арсена</td>
-    <td>1</td>
-    <td>1500 ₽</td>
-  </tr>
-  <tr>
-    <td>Кепка Арсена</td>
-    <td>2</td>
-    <td>1600 ₽</td>
-  </tr>
-  </tbody>
-</table>
-<p><strong>Итого:</strong> 3100 ₽</p>
-<button class="make-order">Сделать заказ</button>
-<p><a href="merches.html">Вернуться к товарам</a></p>
-<script src="script.js"></script>
+<div class="container cart-container">
+    <h1>Ваша корзина</h1>
+    <div id="cart"></div>
+    <div class="total-container">Итого: <span id="total">0.00</span> ₽</div>
+    <button id="order-btn">Сделать заказ</button>
+    <br>
+    <button id="clear-cart">Очистить корзину</button>
+    <p><a href="merches.html">Вернуться к товарам</a></p>
+</div>
+
+<script>
+    /* === Cart Logic === */
+    function getCart() {
+        return JSON.parse(localStorage.getItem('cartItems') || '[]');
+    }
+    function saveCart(cart) {
+        localStorage.setItem('cartItems', JSON.stringify(cart));
+    }
+
+    function renderCart() {
+        const cartDiv = document.getElementById('cart');
+        const cart = getCart();
+        cartDiv.innerHTML = '';
+
+        if(cart.length === 0){
+            cartDiv.innerHTML = '<p>Корзина пуста</p>';
+            document.getElementById('total').textContent = '0.00';
+            return;
+        }
+
+        let total = 0;
+        cart.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'cart-item';
+            div.innerHTML = `
+            <span>${item.name} — ${item.price.toFixed(2)} ₽</span>
+            <input type="number" class="qty-cart" value="${item.quantity}" min="1">
+            <button class="remove-btn">Удалить</button>
+        `;
+            div.querySelector('.qty-cart').addEventListener('change', e => {
+                let q = parseInt(e.target.value);
+                if(isNaN(q) || q<1) q=1;
+                cart[idx].quantity = q;
+                saveCart(cart);
+                renderCart();
+            });
+            div.querySelector('.remove-btn').addEventListener('click', () => {
+                cart.splice(idx,1);
+                saveCart(cart);
+                renderCart();
+            });
+            cartDiv.appendChild(div);
+            total += item.price * item.quantity;
+        });
+
+        document.getElementById('total').textContent = total.toFixed(2);
+    }
+
+    // Очистка корзины
+    document.getElementById('clear-cart').addEventListener('click', () => {
+        localStorage.removeItem('cartItems');
+        renderCart();
+    });
+
+    // Сделать заказ (отправка JSON на сервер)
+    document.getElementById('order-btn').addEventListener('click', async () => {
+        const cart = getCart();
+        if(cart.length === 0){
+            alert("Корзина пуста!");
+            return;
+        }
+
+        try {
+            const res = await fetch('/order', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({items: cart})
+            });
+            const text = await res.text();
+            alert(text);
+
+            // Очистка корзины
+            localStorage.removeItem('cartItems');
+            renderCart();
+        } catch(err) {
+            console.error(err);
+            alert("Ошибка при отправке заказа");
+        }
+    });
+
+    // Инициализация
+    renderCart();
+
+    /* === Sidebar и тема === */
+    const menuToggle = document.getElementById('menuToggle');
+    const themeToggle = document.getElementById('theme-toggle');
+    const sidebar = document.getElementById('mainNav');
+    const overlay = document.getElementById('overlay');
+    const closeBtn = sidebar.querySelector('.close-btn');
+
+    menuToggle.addEventListener('click', ()=> {sidebar.classList.add('active'); overlay.classList.add('active');});
+    closeBtn.addEventListener('click', ()=> {sidebar.classList.remove('active'); overlay.classList.remove('active');});
+    overlay.addEventListener('click', ()=> {sidebar.classList.remove('active'); overlay.classList.remove('active');});
+
+    themeToggle.addEventListener('click', ()=>{
+        document.body.classList.toggle('dark');
+    });
+</script>
+
 </body>
 </html>

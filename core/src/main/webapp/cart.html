@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+    <style>
+        * {box-sizing:border-box;margin:0;padding:0;}
+        body {
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            line-height:1.6;color:#333;background:#f4f4f4;text-align:center;
+        }
+        .cart-table {
+            width:90%;max-width:800px;margin:30px auto;border-collapse:collapse;
+            box-shadow:0 6px 15px rgba(0,0,0,0.08);
+        }
+        .cart-table th, .cart-table td {padding:15px;text-align:center;}
+        .cart-table thead {background:#27ae60;color:#fff;}
+        .cart-table tbody tr:nth-child(even){background:#f9f9f9;}
+        button.make-order {
+            display:inline-block;padding:14px 30px;margin-top:20px;
+            background:#27ae60;color:#fff;border:none;border-radius:8px;
+            font-size:1.1rem;font-weight:bold;cursor:pointer;
+        }
+        button.make-order:hover {background:#2ecc71;}
+    </style>
+</head>
+<body>
+<h1>Ваша корзина</h1>
+<h1>Сосал</h1>
+<table class="cart-table">
+    <thead>
+    <tr><th>Товар</th><th>Количество</th><th>Цена</th></tr>
+    </thead>
+    <tbody id="cart-body"></tbody>
+</table>
+<p><strong>Итого:</strong> <span id="total"></span> ₽</p>
+<button class="make-order" onclick="makeOrder()">Сделать заказ</button>
+<p><a href="merches.html">Вернуться к товарам</a></p>
+
+<script>
+    async function loadCart() {
+        const res = await fetch('/cart');
+        const cart = await res.json();
+        const body = document.getElementById('cart-body');
+        body.innerHTML = '';
+        let total = 0;
+        cart.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${item.name}</td><td>${item.quantity}</td><td>${item.price * item.quantity} ₽</td>`;
+            body.appendChild(row);
+            total += item.price * item.quantity;
+        });
+        document.getElementById('total').textContent = total;
+    }
+
+    async function makeOrder() {
+        const res = await fetch('/order', {method:'POST'});
+        const text = await res.text();
+        alert(text);
+        loadCart();
+    }
+
+    loadCart();
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мерч Арсена</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="top-controls">
+    <button id="menuToggle" class="menu-toggle">☰ Меню</button>
+    <button id="theme-toggle" class="theme-toggle">🌙 / ☀️</button>
+</div>
+
+<nav id="mainNav" class="nav-sidebar">
+    <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="bio.html">Биография</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="bag.html">Багажник</a></li>
+        <li><a href="form.html">Форма</a></li>
+        <li><a href="stat.html">Статистика</a></li>
+        <li><a href="merches.html">Товары</a></li>
+        <li><a href="cart.html">Корзина</a></li>
+    </ul>
+    <button class="close-btn">×</button>
+</nav>
+
+<div id="overlay" class="overlay"></div>
+
+<div class="container">
+    <header>
+        <h1>Мерч Арсена</h1>
+    </header>
+
+    <main>
+        <div id="products" class="products"></div>
+        <p><a href="cart.html">Перейти в корзину</a></p>
+    </main>
+</div>
+
+<script>
+    async function loadProducts() {
+        try {
+            const res = await fetch('/products');
+            const products = await res.json();
+            const container = document.getElementById('products');
+            container.innerHTML = '';
+
+            // Добавляем тестовый товар
+            products.push({id:4, name:"Футболка", price:1590});
+
+            products.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'product';
+                div.innerHTML = `
+                    <h2>${p.name}</h2>
+                    <p>Цена: ${p.price} ₽</p>
+                    <label>Количество:
+                        <input type="number" min="1" value="1" class="qty">
+                    </label>
+                    <button>Добавить в корзину</button>
+                `;
+
+                div.querySelector('button').addEventListener('click', () => {
+                    const quantity = parseInt(div.querySelector('.qty').value);
+                    fetch('/cart', {
+                        method:'POST',
+                        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                        body:`id=${p.id}&name=${encodeURIComponent(p.name)}&price=${p.price}&quantity=${quantity}`
+                    }).then(() => alert('Добавлено в корзину!'))
+                        .catch(() => alert('Ошибка при добавлении'));
+                });
+
+                container.appendChild(div);
+            });
+        } catch(err) {
+            console.error(err);
+            document.getElementById('products').innerHTML = "<p>Не удалось загрузить товары</p>";
+        }
+    }
+
+    loadProducts();
+</script>
+
+<script src="script.js"></script>
+</body>
+</html>
