@@ -1,49 +1,51 @@
 package ru.javabegin.micro.demo.controller;
 
+import com.google.gson.Gson;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.javabegin.micro.demo.dao.ProductDAO;
 import ru.javabegin.micro.demo.model.Product;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @WebServlet("/products")
 public class ProductServlet extends HttpServlet {
 
+    private final ProductDAO productDAO = new ProductDAO();
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        // Кодировка и тип ответа
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("application/json; charset=UTF-8");
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json; charset=utf-8");
 
-        // Создаем список товаров
-        List<Product> products = new ArrayList<>();
-        products.add(new Product(1, "Футболка Арсена", 1500));
-        products.add(new Product(2, "Кепка Арсена", 800));
-        products.add(new Product(3, "Постер Арсена", 400));
-        products.add(new Product(4, "Футболка", 1590));
+        System.out.println("Получен запрос на /products");
 
-        // Формируем JSON вручную
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (int i = 0; i < products.size(); i++) {
-            Product p = products.get(i);
-            sb.append("{")
-                .append("\"id\":").append(p.getId()).append(",")
-                .append("\"name\":\"").append(p.getName()).append("\",")
-                .append("\"price\":").append(p.getPrice())
-                .append("}");
-            if (i < products.size() - 1) sb.append(",");
-        }
-        sb.append("]");
+        try {
+            List<Product> products = productDAO.getAllProducts();
 
-        // Отправляем ответ
-        try (PrintWriter out = resp.getWriter()) {
-            out.write(sb.toString());
+            System.out.println("После запроса к БД, количество товаров: " + products.size());
+
+            // Добавьте отладку каждого товара
+            for (Product p : products) {
+                System.out.println("Товар: " + p.getName() +
+                    ", ID: " + p.getId() +
+                    ", Цена: " + p.getPrice() +
+                    ", Точек выдачи: " + (p.getPickupPoints() != null ? p.getPickupPoints().size() : 0));
+            }
+
+            String json = new Gson().toJson(products);
+            System.out.println("Отправляемый JSON: " + json);
+
+            resp.getWriter().write(json);
+
+        } catch (Exception e) {
+            System.err.println("Критическая ошибка в ProductServlet: " + e.getMessage());
+            e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().write("{\"error\":\"Ошибка сервера\"}");
         }
     }
 }

@@ -6,7 +6,6 @@
     <title>Товары Арсена</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Карточки товаров */
         .products {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -31,7 +30,7 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
 
-        .product-card h2 {
+        .product-card h3 {
             font-size: 1.3rem;
             margin-bottom: 10px;
         }
@@ -42,7 +41,7 @@
         }
 
         .product-card input.qty {
-            width: 50px;
+            width: 60px;
             text-align: center;
             margin-bottom: 10px;
             padding: 6px;
@@ -83,6 +82,7 @@
         <li><a href="form.html">Форма</a></li>
         <li><a href="merches.html">Товары</a></li>
         <li><a href="cart.html">Корзина</a></li>
+        <li><a href="logout">Выйти</a></li>
     </ul>
     <button class="close-btn">×</button>
 </nav>
@@ -95,14 +95,12 @@
     </header>
 
     <main>
-        <div class="products" id="products">
-            <!-- JS добавит карточки -->
-        </div>
+        <div id="product-list" class="products"></div>
     </main>
 </div>
 
 <script>
-    // Меню
+    // ===== Навигация и тьма =====
     const menu = document.getElementById('mainNav');
     const overlay = document.getElementById('overlay');
     document.getElementById('menuToggle').addEventListener('click', () => {
@@ -117,20 +115,11 @@
         menu.classList.remove('active');
         overlay.classList.remove('active');
     });
-
-    // Темная тема
     document.getElementById('theme-toggle').addEventListener('click', () => {
         document.body.classList.toggle('dark');
     });
 
-    // Товары
-    const productsData = [
-        {id:1, name:'Футболка', price:1500},
-        {id:2, name:'Кепка', price:800},
-        {id:3, name:'Постер', price:400},
-        {id:4, name:'Майка', price:990}
-    ];
-
+    // ===== Функции корзины =====
     function getCart() {
         return JSON.parse(localStorage.getItem('cartItems') || '[]');
     }
@@ -138,28 +127,49 @@
         localStorage.setItem('cartItems', JSON.stringify(cart));
     }
 
-    const container = document.getElementById('products');
-    productsData.forEach(p => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.innerHTML = `
-        <h2>${p.name}</h2>
-        <p>Цена: ${p.price} ₽</p>
-        <input type="number" value="1" min="1" class="qty">
-        <button>Добавить в корзину</button>
-    `;
-        const btn = card.querySelector('button');
-        btn.addEventListener('click', () => {
-            const qty = parseInt(card.querySelector('.qty').value);
-            let cart = getCart();
-            const existing = cart.find(it => it.id === p.id);
-            if(existing) existing.quantity += qty;
-            else cart.push({id:p.id, name:p.name, price:p.price, quantity:qty});
-            saveCart(cart);
-            alert('Добавлено в корзину!');
-        });
-        container.appendChild(card);
-    });
+    function addToCart(product) {
+        let cart = getCart();
+        const idx = cart.findIndex(p => p.id === product.id);
+        if (idx !== -1) {
+            cart[idx].quantity += product.quantity;
+        } else {
+            cart.push(product);
+        }
+        saveCart(cart);
+        alert(`Товар "${product.name}" добавлен в корзину ✅`);
+    }
+
+    // ===== Загрузка товаров =====
+    fetch(window.location.origin + '/products')
+        .then(res => res.json())
+        .then(products => {
+            const container = document.getElementById('product-list');
+            container.innerHTML = products.map(p => `
+        <div class="product-card">
+          <h3>${p.name}</h3>
+          <p>Цена: ${p.price} ₽</p>
+          <p>${p.description || ''}</p>
+          <p><strong>Точки выдачи:</strong><br>${p.pickupPoints.map(x => x.city + ', ' + x.address).join('<br>')}</p>
+          <input type="number" class="qty" min="1" value="1">
+          <button class="add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">Добавить в корзину</button>
+        </div>
+      `).join('');
+
+            // Навешиваем обработчики после генерации
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    const card = e.target.closest('.product-card');
+                    const qty = parseInt(card.querySelector('.qty').value) || 1;
+                    addToCart({
+                        id: parseInt(btn.dataset.id),
+                        name: btn.dataset.name,
+                        price: parseFloat(btn.dataset.price),
+                        quantity: qty
+                    });
+                });
+            });
+        })
+        .catch(err => console.error('Ошибка загрузки товаров:', err));
 </script>
 
 </body>

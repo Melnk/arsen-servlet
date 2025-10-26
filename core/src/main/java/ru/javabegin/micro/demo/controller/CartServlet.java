@@ -33,33 +33,33 @@ public class CartServlet extends HttpServlet {
         resp.getWriter().write(new Gson().toJson(items));
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.setCharacterEncoding("UTF-8");
-        HttpSession session = req.getSession();
-        Cart cart = (Cart) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new Cart();
-            session.setAttribute("cart", cart);
-        }
-
-        String action = req.getParameter("action");
-        int id = Integer.parseInt(req.getParameter("id"));
-
-        if ("add".equals(action)) {
-            String name = req.getParameter("name");
-            double price = Double.parseDouble(req.getParameter("price"));
-            int quantity = Integer.parseInt(req.getParameter("quantity"));
-            cart.addProduct(new Product(id, name, price), quantity);
-        } else if ("update".equals(action)) {
-            int quantity = Integer.parseInt(req.getParameter("quantity"));
-            cart.updateProduct(id, quantity);
-        } else if ("remove".equals(action)) {
-            cart.removeProduct(id);
-        }
-
-        resp.setContentType("application/json; charset=UTF-8");
-        resp.getWriter().write("{\"status\":\"ok\"}");
-    }
+//    @Override
+//    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+//        req.setCharacterEncoding("UTF-8");
+//        HttpSession session = req.getSession();
+//        Cart cart = (Cart) session.getAttribute("cart");
+//        if (cart == null) {
+//            cart = new Cart();
+//            session.setAttribute("cart", cart);
+//        }
+//
+//        String action = req.getParameter("action");
+//        int id = Integer.parseInt(req.getParameter("id"));
+//
+//        if ("add".equals(action)) {
+//            String name = req.getParameter("name");
+//            double price = Double.parseDouble(req.getParameter("price"));
+//            int quantity = Integer.parseInt(req.getParameter("quantity"));
+//            cart.addProduct(new Product(id, name, price), quantity);
+//        } else if ("update".equals(action)) {
+//            int quantity = Integer.parseInt(req.getParameter("quantity"));
+//            cart.updateProduct(id, quantity);
+//        } else if ("remove".equals(action)) {
+//            cart.removeProduct(id);
+//        }
+//
+//        resp.setContentType("application/json; charset=UTF-8");
+//        resp.getWriter().write("{\"status\":\"ok\"}");
+//    }
 
 }

@@ -33,6 +33,9 @@
 <% } else if (request.getParameter("registered") != null) { %>
 <p style="color:green;">Регистрация прошла успешно!</p>
 <% } %>
+<% if (request.getParameter("logout") != null) { %>
+    <p style="color:green;">Вы успешно вышли из аккаунта</p>
+<% } %>
 
 <p><a href="register.jsp">Нет аккаунта? Зарегистрируйтесь</a></p>
 </body>
