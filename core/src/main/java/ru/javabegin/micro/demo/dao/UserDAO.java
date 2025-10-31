@@ -1,6 +1,7 @@
 package ru.javabegin.micro.demo.dao;
 
 import ru.javabegin.micro.demo.model.User;
+import ru.javabegin.micro.demo.util.DBUtil;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,26 +10,11 @@ import java.sql.SQLException;
 
 public class UserDAO {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/arsen_site";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "qwerty";
-
-    static {
-        try {
-            Class.forName("org.postgresql.Driver");
-            System.out.println("✅ PostgreSQL драйвер загружен");
-        } catch (ClassNotFoundException e) {
-            System.err.println("❌ PostgreSQL JDBC Driver не найден!");
-            e.printStackTrace();
-        }
-    }
-
-    // Поиск пользователей по email
     public User findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
 
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, email);
                 ResultSet rs = ps.executeQuery();
 
@@ -48,7 +34,7 @@ public class UserDAO {
 
     public boolean save(User user) {
         String sql = "INSERT INTO users(email, password, role) values(?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        try (Connection conn = DBUtil.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql)) {
             //
             ps.setString(1, user.getEmail());
