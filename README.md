@@ -1,15 +1,23 @@
 # Arsen Servlet Demo
 
-Пример простого Java Servlet-приложения на Apache Tomcat.  
-Форма HTML отправляет данные на сервлет, который выполняет базовую валидацию, сохраняет их в файл и перенаправляет пользователя на страницу «Спасибо».
+Полнофункциональный учебный web-проект на Jakarta Servlets (Tomcat 10+) с подключением PostgreSQL, JDBC, JWT-аутентификацией и MVC-архитектурой.
+Приложение реализует личный кабинет пользователя, каталог товаров, корзину и оформление заказов.
 
 ---
 
-## Структура проекта
+Основные функционал
 
-- `form.html` — форма для ввода имени и e-mail.
-- `thanks.html` — страница с сообщением «Спасибо».
-- `SubmitServlet` — принимает POST-запросы, валидирует данные, пишет в файл `WEB-INF/data.txt`, делает редирект.
+- **Регистрация и авторизация пользователей (с JWT-токенами)**
+- **Разделение ролей User/Admin**
+- **Добавление и просмотр товаров**
+- **Корзина с расчётом итоговой суммы**
+- **Оформление заказов**
+- **Подключение к PostgreSQL через JDBC**
+- **Работа по паттерну MVC**
+- **Использование WebFilter и WebListener**
+- **HTML/JS frontend с AJAX и LocalStorage**
+- **Поддержка светлой/тёмной темы**
+- **Использование JSP/Freemarker (для динамических страниц)**
 
 ---
 
@@ -47,29 +55,34 @@
 
 ---
 
-## Функционал
-
-- **Светлая/тёмная тема** (CSS-переключатель).
-- **Навигационная панель** (header с ссылками на разделы).
-- **Анимации для изображений и кнопок** (CSS transitions/animations).
-- **HTML-форма**
-- **Валидация данных**
-- **Сохранение данных в .txt файл**
-- **Реализовано 6 HTML страниц**
----
 
 ## Галерея
 
-### Главная страница
-<img width="1905" height="1004" alt="image" src="https://github.com/user-attachments/assets/a87cba1e-0478-45d7-abdb-d825903cf29f" />
+### Авторизация
+<img width="1917" height="955" alt="image" src="https://github.com/user-attachments/assets/f5596b44-80a6-48bf-a2b4-359d5c1f5af2" />
+
+### Главное меню
+<img width="1917" height="958" alt="image" src="https://github.com/user-attachments/assets/437bbf40-cb7b-4a3e-9490-69828d639771" />
 
 ### Биография с темной темой
-<img width="1908" height="1004" alt="image" src="https://github.com/user-attachments/assets/8d26648d-8755-49b9-8572-00a2a428205c" />
+<img width="1918" height="964" alt="image" src="https://github.com/user-attachments/assets/69368ee3-babe-4e52-a373-0ac70e7b8f6c" />
 
 ### Галерея с изображениями
-<img width="1905" height="1004" alt="image" src="https://github.com/user-attachments/assets/26b0934a-7819-4329-a36e-135592bc7c46" />
+<img width="1915" height="959" alt="image" src="https://github.com/user-attachments/assets/4a208fb7-a94b-4193-aecc-35ddbdbacf70" />
 
 ### Форма для обратной связи
-<img width="1905" height="1002" alt="image" src="https://github.com/user-attachments/assets/c291de14-6516-4ba7-93b1-3f2e73754f3f" />
+<img width="1918" height="962" alt="image" src="https://github.com/user-attachments/assets/986bd784-7c0f-4cc8-b505-ac6f62d1d4cb" />
+
+### Товары
+<img width="1916" height="959" alt="image" src="https://github.com/user-attachments/assets/b70e98ea-805b-49e6-bd3c-3a8b7d5e56d9" />
+
+### Добавление в корзину
+<img width="1916" height="959" alt="image" src="https://github.com/user-attachments/assets/b1bd28d0-e4d7-4c41-9749-8c095c887b5e" />
+
+### Корзина
+<img width="1918" height="955" alt="image" src="https://github.com/user-attachments/assets/e406e316-c83c-4452-8b6a-3aae7c3aa46e" />
+
+
+
 
 
